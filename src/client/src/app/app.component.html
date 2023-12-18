@@ -1,0 +1,62 @@
+<div class="container" *ngIf="!isConnected">
+  <div class="row">
+    <div class="my-5 col-md-4 offset-md-4">
+      <form>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Enter a Name</label>
+          <input autofocus type="text" [(ngModel)]="userName" class="form-control" name="exampleInputEmail1"
+            aria-describedby="emailHelp">
+        </div>
+        <div name="emailHelp" *ngIf="showNameError" class="form-text">{{ nameError }}</div>
+        <br>
+        <button (click)="init()" type="submit" class="btn btn-primary">Chat</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="isConnected && !isTalking">
+  <h2 class="text-center my-4">Users Currently Online</h2>
+  <form class="col-12">
+    <input [(ngModel)]="searchText" (keyup.enter)="search()" type="search" class="form-control" placeholder="Search..."
+      name="Search">
+  </form>
+  <div class="row" *ngFor="let user of users">
+    <div class="col my-5">
+      <h3 id="{{ user.name }}#{{ user.id }}">{{ user.name }}#{{ user.id }} <span class="fs-6"
+          *ngIf="user.id === socketId">You</span></h3>
+      <button *ngIf="!(user.id === socketId)" (click)="initTalk(user)" class="btn btn-primary my-2">Talk</button>
+      <p *ngIf="user.sent">Request Sent</p>
+      <p *ngIf="showRequest && (user.id == requestUser.initiator)">Incoming Request... <a (click)="Connect(requestUser)"
+          href="javascript:void(0)">Connect?</a></p>
+      <button *ngIf="(user.id === socketId)" (click)="logout()" class="btn btn-danger my-2">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="container" *ngIf="isTalking">
+  <h1 class="text-center my-4">Talking to {{ talkingTo.name }}</h1>
+  <h2 class="text-center my-2 fs-5">Your Connection is now End-To-End Encrypted</h2>
+</div>
+<div class="container" *ngIf="isTalking">
+  <div class="row">
+    <div class="my-1" *ngFor="let message of messages">
+      <p *ngIf="message.isSent" class="text-primary">{{ message.txt }}</p>
+      <p *ngIf="!message.isSent" class="text-secondary">{{ message.txt }}</p>
+    </div>
+  </div>
+</div>
+<div class="container" *ngIf="isTalking">
+  <div class="row">
+    <div class="col-8 offset-2 my-5">
+      <form>
+        <div class="input-group">
+          <button type="button" class="btn btn-danger" (click)="endTalk()">Leave</button>
+          <input id="sendingtab" autofocus type="email" [(ngModel)]="messageInput" class="form-control" name="exampleInputEmail1"
+            aria-describedby="emailHelp">
+          <button (click)="Send()" type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
